@@ -1,10 +1,14 @@
 version: '3'
 services:
   app1:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile
     env_file:
         - ./app1.env
   app2:
-    build: .
+    build: 
+      context: .
+      dockerfile: dockerfile2
     env_file:
         - ./app2.env
