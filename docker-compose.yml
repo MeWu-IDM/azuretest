@@ -4,11 +4,16 @@ services:
     build:
       context: .
       dockerfile: dockerfile
+    image: azuretest_app1
+    command: "python test.py -o /app1 -n x.txt"  
     env_file:
         - ./app1.env
   app2:
     build: 
       context: .
-      dockerfile: dockerfile2
+      dockerfile: dockerfile
+    image: azuretest_app2
+    command: "python test.py -o /app2 -n y.txt"
+    
     env_file:
         - ./app2.env

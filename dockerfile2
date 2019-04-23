@@ -1,6 +1,0 @@
-FROM python:3.6
-ADD . /app
-WORKDIR /app
-ENV outfolder=/app2
-ENV filename=y.txt
-CMD python test.py -o $outfolder -n $filename
