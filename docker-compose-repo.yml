@@ -1,7 +1,0 @@
-version: '3'
-services:
-  app1:
-    image: mewutestregistry.azurecr.io/azuretest_app1
-  app2:
-    image: mewutestregistry.azurecr.io/azuretest_app2
-    
