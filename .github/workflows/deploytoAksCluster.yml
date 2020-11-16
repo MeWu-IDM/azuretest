@@ -1,0 +1,50 @@
+on: [push]
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    
+    - uses: azure/docker-login@v1
+      with:
+        login-server: mewuacr.azurecr.io
+        username: ${{ secrets.acr_mewuacr_username }}
+        password: ${{ secrets.acr_mewuacr_password }}
+    
+    - name: Build and push image to ACR
+      id: build-image
+      run: |
+        docker build "$GITHUB_WORKSPACE/" -f  "dockerfile" -t mewuacr.azurecr.io/mewuaks2:${{ github.sha }}
+        docker push mewuacr.azurecr.io/mewuaks2:${{ github.sha }}
+    
+    - uses: azure/k8s-set-context@v1
+      with:
+         kubeconfig: ${{ secrets.aks_mewuaks2_kubeConfig }}
+      id: login
+    
+    - name: Create namespace
+      run: |
+        namespacePresent=`kubectl get namespace | grep test1 | wc -l`
+        if [ $namespacePresent -eq 0 ]
+        then
+            echo `kubectl create namespace test1`
+        fi
+
+    - uses: azure/k8s-create-secret@v1
+      with:
+        namespace: test1
+        container-registry-url: mewuacr.azurecr.io
+        container-registry-username: ${{ secrets.acr_mewuacr_username }}
+        container-registry-password: ${{ secrets.acr_mewuacr_password }}
+        secret-name: mewuaks2dockerauth
+       
+    - uses: azure/k8s-deploy@v1.2
+      with:
+        namespace: test1
+        manifests: |
+          manifests/deployment.yml
+          manifests/service.yml
+        images: |
+          mewuacr.azurecr.io/mewuaks2:${{ github.sha }}
+        imagepullsecrets: |
+          mewuaks2dockerauth
