@@ -1,0 +1,19 @@
+apiVersion : apps/v1
+kind: Deployment
+metadata:
+  name: "mewuaks2-9ce8"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: "mewuaks2-9ce8"
+  template:
+    metadata:
+      labels:
+        app: "mewuaks2-9ce8"
+    spec:
+      containers:
+        - name: "mewuaks2-9ce8"
+          image: "mewuacr.azurecr.io/mewuaks2"
+          ports:
+          - containerPort: 80
